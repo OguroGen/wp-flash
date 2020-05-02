@@ -1,6 +1,10 @@
 jQuery(function ($) {
     
     var myMondai, myCnt, myKotae, Keta, Kuchi, Interval, difficulty;
+    var objMondaiStyle = new Object;
+    var objReadyStyle = new Object;
+    var objCorrectStyle = new Object;
+    var objMissStyle = new Object;
     
     myMondai = new Array(30);
     //初期値は１０級
@@ -9,17 +13,37 @@ jQuery(function ($) {
     Interval = 2000;
     difficulty = 4;
     
+    //問題の表示スタイル
+    objMondaiStyle.color = "#E0FFFF";
+    objMondaiStyle.fontSize = "100pt";
+    objMondaiStyle.fontFamily = 'Sawarabi Gothic';
+    objMondaiStyle.paddingTop = "30px";
+    //ReadyStartの表示スタイル
+    objReadyStyle.color = "#FFE4E1";
+    objReadyStyle.fontSize = "20pt";
+    objReadyStyle.fontFamily = 'Righteous';
+    objReadyStyle.paddingTop = "40px";
+    //ご明算の表示スタイル
+    objCorrectStyle.color = "lightgoldenrodyellow";
+    objCorrectStyle.fontSize = "60pt";
+    objCorrectStyle.fontFamily = 'Kosugi Maru';
+    objCorrectStyle.paddingTop = "10px";
+    //残念の表示スタイル
+    objMissStyle.color = "lightblue";
+    objMissStyle.fontSize = "30pt";
+    objMissStyle.fontFamily = 'Sawarabi Gothic';
+    objMissStyle.paddingTop = "20px";
+    
     function Ready() {
-        $("#mondai").empty();
         
-        $("#Message").css("fontSize", "20pt").text("READY").show().animate({fontSize: "50pt"}, 800, function () {
+        $("#mondai").css(objReadyStyle).text("READY").show().animate({fontSize: "60pt"}, 800, function () {
             
-            $("#Message").text("");
+            $("#mondai").text("");
             
             setTimeout(function () {
-                $("#Message").css("fontSize", "50pt").text("START");
+                $("#mondai").css("fontSize", "70pt").text("START");
                 setTimeout(function () {
-                    $("#Message").hide();
+                    $("#mondai").text("").css(objMondaiStyle);
                     setTimeout(function () {mondaiHyoji(); }, 700);
                 }, 700);
             }, 700);
@@ -52,9 +76,9 @@ jQuery(function ($) {
             $("#StartButton").prop("disabled",false);
             
             if (inputAns === myKotae) {
-                $("#Message").text("ご明算").show();
+                $("#mondai").css(objCorrectStyle).html("ご明算<br>Correct.").show();
             } else {
-                $("#Message").text("正解は" + myKotae + "だよ").show();
+                $("#mondai").css(objMissStyle).html("残念<br>正解は" + myKotae + "だよ<br>The answer is " + myKotae + ".").show();
             }
         } else {
             $("#kotaeText").val("");
@@ -78,7 +102,7 @@ jQuery(function ($) {
 
     //問題を作成する
     function Sakumon() {
-        var i, j, tmpR, tmpSum, check, a ,b;
+        var i, j, tmpR, check, a ,b;
         var preNum = [];
         var nowNum = [];
         var sumNum = [];
@@ -409,6 +433,140 @@ jQuery(function ($) {
                 myKotae += myMondai[i];
             }
             break;
+                
+        case 6: //全珠連の７級専用（２桁３口、１の位に２回０が出てくる）
+            
+            tmpR = Math.floor(Math.random()*3);
+                
+            for (i = 0; i < Kuchi ; i++) {                
+                do{
+                    if(i == tmpR){
+                        myMondai[i] = Math.floor( Math.random() * 90 + 10);
+                    } else {
+                        myMondai[i] = Math.floor( Math.random() * 9 + 1 ) * 10;
+                    }
+                    
+                    check = DuplicatedCheck(myMondai[i]);           //重複する文字があるかチェック
+                    
+                    if(i > 0){
+                        if(myMondai[i] == myMondai[i-1]) {check = true;}
+                    }
+                    
+                } while(check);
+
+                myKotae += myMondai[i];
+            }
+            break;
+            
+        case 7: //全珠連の１１級専用（２桁繰り上がりなし、１の位は０）
+            for (i = 0; i < Kuchi ; i++) {
+                do{
+                    check = false;                   
+                    switch(myKotae) {
+                    case 0:
+                        tmpR = Math.floor( Math.random() * 7 +1);
+                        if(tmpR == 1) {myMondai[i] = 10}
+                        if(tmpR == 2) {myMondai[i] = 20}
+                        if(tmpR == 3) {myMondai[i] = 30}
+                        if(tmpR == 4) {myMondai[i] = 50}
+                        if(tmpR == 5) {myMondai[i] = 60}
+                        if(tmpR == 6) {myMondai[i] = 70}
+                        if(tmpR == 7) {myMondai[i] = 80}
+                        break;
+                    case 10:
+                        tmpR = Math.floor( Math.random()  * 8 + 1);
+                        if(tmpR == 1) {myMondai[i] = -10}
+                        if(tmpR == 2) {myMondai[i] = 10}
+                        if(tmpR == 3) {myMondai[i] = 20}
+                        if(tmpR == 4) {myMondai[i] = 30}
+                        if(tmpR == 5) {myMondai[i] = 50}
+                        if(tmpR == 6) {myMondai[i] = 60}
+                        if(tmpR == 7) {myMondai[i] = 70}
+                        if(tmpR == 8) {myMondai[i] = 80}
+                        break;
+                    case 20:
+                        tmpR = Math.floor( Math.random()  * 7 + 1);
+                        if(tmpR == 1) {myMondai[i] = -20}
+                        if(tmpR == 2) {myMondai[i] = -10}
+                        if(tmpR == 3) {myMondai[i] = 10}
+                        if(tmpR == 4) {myMondai[i] = 20}
+                        if(tmpR == 5) {myMondai[i] = 50}
+                        if(tmpR == 6) {myMondai[i] = 60}
+                        if(tmpR == 7) {myMondai[i] = 70}
+                        break;
+                    case 30:
+                        tmpR = Math.floor( Math.random()  * 6 + 1);
+                        if(tmpR == 1) {myMondai[i] = -30}
+                        if(tmpR == 2) {myMondai[i] = -20}
+                        if(tmpR == 3) {myMondai[i] = -10}
+                        if(tmpR == 4) {myMondai[i] = 10}
+                        if(tmpR == 5) {myMondai[i] = 50}
+                        if(tmpR == 6) {myMondai[i] = 60}
+                        break;
+                    case 40:
+                        tmpR = Math.floor( Math.random()  * 4 + 1);
+                        if(tmpR == 1) {myMondai[i] = -30}
+                        if(tmpR == 2) {myMondai[i] = -20}
+                        if(tmpR == 3) {myMondai[i] = -10}
+                        if(tmpR == 4) {myMondai[i] = 50}
+                        break;
+                    case 50:
+                        tmpR = Math.floor( Math.random()  * 4 + 1);
+                        if(tmpR == 1) {myMondai[i] = -50}
+                        if(tmpR == 2) {myMondai[i] = 10}
+                        if(tmpR == 3) {myMondai[i] = 20}
+                        if(tmpR == 4) {myMondai[i] = 30}
+                        break;
+                    case 60:
+                        tmpR = Math.floor( Math.random()  * 6 + 1);
+                        if(tmpR == 1) {myMondai[i] = -60}
+                        if(tmpR == 2) {myMondai[i] = -50}
+                        if(tmpR == 3) {myMondai[i] = -10}
+                        if(tmpR == 4) {myMondai[i] = 10}
+                        if(tmpR == 5) {myMondai[i] = 20}
+                        if(tmpR == 6) {myMondai[i] = 30}
+                        break;
+                    case 70:
+                        tmpR = Math.floor( Math.random()  * 7 + 1);
+                        if(tmpR == 1) {myMondai[i] = -70}
+                        if(tmpR == 2) {myMondai[i] = -60}
+                        if(tmpR == 3) {myMondai[i] = -50}
+                        if(tmpR == 4) {myMondai[i] = -20}
+                        if(tmpR == 5) {myMondai[i] = -10}
+                        if(tmpR == 6) {myMondai[i] = 10}
+                        if(tmpR == 7) {myMondai[i] = 20}
+                        break;
+                    case 80:
+                        tmpR = Math.floor( Math.random()  * 8 + 1);
+                        if(tmpR == 1) {myMondai[i] = -80}
+                        if(tmpR == 2) {myMondai[i] = -70}
+                        if(tmpR == 3) {myMondai[i] = -60}
+                        if(tmpR == 4) {myMondai[i] = -50}
+                        if(tmpR == 5) {myMondai[i] = -30}
+                        if(tmpR == 6) {myMondai[i] = -20}
+                        if(tmpR == 7) {myMondai[i] = -10}
+                        if(tmpR == 8) {myMondai[i] = 10}
+                        break;
+                    case 90:
+                        tmpR = Math.floor( Math.random()  * 7 + 1);
+                        if(tmpR == 1) {myMondai[i] = -80}
+                        if(tmpR == 2) {myMondai[i] = -70}
+                        if(tmpR == 3) {myMondai[i] = -60}
+                        if(tmpR == 4) {myMondai[i] = -50}
+                        if(tmpR == 5) {myMondai[i] = -30}
+                        if(tmpR == 6) {myMondai[i] = -20}
+                        if(tmpR == 7) {myMondai[i] = -10}
+                        break;
+                    }
+                    
+                    if(myMondai[i] == myMondai[i-1]) {check = true}
+                    
+                } while(check);
+                
+                myKotae += myMondai[i];
+                
+            }
+            break;
         }
     }
     
@@ -603,122 +761,122 @@ jQuery(function ($) {
                 Kuchi = 3;
                 Interval = 1000;
                 break;
-            case "K1" :
+            case "K1" :    //１級
                 difficulty = 5;
                 Keta = 2;
                 Kuchi = 15;
                 Interval = 867;
                 break;
-            case "K2" :
+            case "K2" :    //２級
                 difficulty = 5;
                 Keta = 2;
                 Kuchi = 12;
                 Interval = 1000;
                 break;
-            case "K3" :
+            case "K3" :    //３級
                 difficulty = 5;
                 Keta = 2;
                 Kuchi = 10;
                 Interval = 1200;
                 break;
-            case "K4" :
+            case "K4" :    //４級
                 difficulty = 4;
                 Keta = 2;
                 Kuchi = 8;
                 Interval = 1375;
                 break;
-            case "K5" :
+            case "K5" :    //５級
                 difficulty = 4;
                 Keta = 2;
                 Kuchi = 7;
                 Interval = 1429;
                 break;
-            case "K6" :
+            case "K6" :    //６級
                 difficulty = 4;
                 Keta = 2;
                 Kuchi = 6;
                 Interval = 1500;
                 break;
-            case "K7" :
+            case "K7" :    //７級
                 difficulty = 4;
                 Keta = 2;
                 Kuchi = 5;
                 Interval = 1600;
                 break;
-            case "K8" :
+            case "K8" :    //８級
                 difficulty = 4;
                 Keta = 2;
                 Kuchi = 4;
                 Interval = 1750
                 break;
-            case "K9" :
+            case "K9" :    //９級
                 difficulty = 4;
                 Keta = 2;
                 Kuchi = 3;
                 Interval = 2000;
                 break;
-            case "K10" :
+            case "K10" :    //１０級
                 difficulty = 4;
                 Keta = 2;
                 Kuchi = 2;
                 Interval = 2000;
                 break;
-            case "K11" :
+            case "K11" :    //１１級
                 difficulty = 3;
                 Keta = 2;
                 Kuchi = 4;
                 Interval = 2000;
                 break;
-            case "K12" :
+            case "K12" :    //１２級
                 difficulty = 3;
                 Keta = 2;
                 Kuchi = 2;
                 Interval = 1500;
                 break;
-            case "K13" :
-                difficulty = 2;
+            case "K13" :    //１３級
+                difficulty = 7;
                 Keta = 1;
                 Kuchi = 20;
                 Interval = 750;
                 break;
-            case "K14" :
+            case "K14" :    //１４級
                 difficulty = 2;
                 Keta = 1;
                 Kuchi = 15;
                 Interval = 1000;
                 break;
-            case "K15" :
+            case "K15" :    //１５級
                 difficulty = 2;
                 Keta = 1;
                 Kuchi = 12;
                 Interval = 1250;
                 break;
-            case "K16" :
+            case "K16" :    //１６級
                 difficulty = 2;
                 Keta = 1;
                 Kuchi = 10;
                 Interval = 1200;
                 break;
-            case "K17" :
+            case "K17" :    //１７級
                 difficulty = 2;
                 Keta = 1;
                 Kuchi = 8;
                 Interval = 1400;
                 break;
-            case "K18" :
+            case "K18" :    //１８級
                 difficulty = 2;
                 Keta = 1;
                 Kuchi = 5;
                 Interval = 1400;
                 break;
-            case "K19" :
+            case "K19" :    //１９級
                 difficulty = 2;
                 Keta = 1;
                 Kuchi = 3;
                 Interval = 1667;
                 break;
-            case "K20" :
-                difficulty = 1;
+            case "K20" :    //２０級
+                difficulty = 6;
                 Keta = 1;
                 Kuchi = 3;
                 Interval = 1667;
