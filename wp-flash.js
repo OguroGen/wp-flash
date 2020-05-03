@@ -697,7 +697,7 @@ jQuery(function ($) {
                 break;
             case "D65" :    //準六段
                 difficulty = 5;
-                Keta = 2;
+                Keta = 3;
                 Kuchi = 8;
                 Interval = 444;
                 break;
